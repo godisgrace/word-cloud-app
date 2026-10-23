@@ -1,6 +1,8 @@
 services:
   - type: web
-    name: word-cloud-vocabulary
-    runtime: static
-    buildCommand: ""
-    staticPublishPath: .
+    name: word-cloud-app
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
