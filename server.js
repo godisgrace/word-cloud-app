@@ -61,8 +61,9 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && url.pathname === "/api/health") {
     return send(res, 200, { ok: true, configured: Boolean(API_KEY), service: "WORD CLOUD API" });
   }
-  if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
-    const html = fs.readFileSync(path.join(ROOT, "index.html"));
+  if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html" || url.pathname === "/prototype.html")) {
+    const file = url.pathname === "/prototype.html" ? "prototype.html" : "index.html";
+    const html = fs.readFileSync(path.join(ROOT, file));
     return send(res, 200, html.toString(), "text/html; charset=utf-8");
   }
   if (req.method === "GET" && url.pathname === "/favicon.ico") return send(res, 204, "");
