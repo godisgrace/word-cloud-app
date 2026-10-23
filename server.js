@@ -24,15 +24,16 @@ function readBody(req) {
     req.on("error", reject);
   });
 }
-async function askDeepSeek(system, user) {
-  if (!API_KEY) {
+async function askDeepSeek(system, user, suppliedKey) {
+  const activeKey = String(suppliedKey || API_KEY || "").trim();
+  if (!activeKey) {
     const err = new Error("服务端尚未配置 DEEPSEEK_API_KEY 环境变量。");
     err.status = 503;
     throw err;
   }
   const response = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
-    headers: { "Authorization": "Bearer " + API_KEY, "Content-Type": "application/json" },
+    headers: { "Authorization": "Bearer " + activeKey, "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "deepseek-chat",
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
@@ -80,7 +81,7 @@ const server = http.createServer(async (req, res) => {
     } else {
       prompt = "请为词汇 "+word+" 生成 3 道不同形式的英语练习，中文说明。返回 JSON 对象，字段 questions（数组，每项含 type、question、options（数组或空数组）、answer、explanation）。题型可为拼写、填空、语境辨析，答案和解析必须准确。";
     }
-    const result = await askDeepSeek(system, prompt);
+    const result = await askDeepSeek(system, prompt, body.apiKey);
     return send(res, 200, { ok: true, result });
   } catch (err) {
     const status = err.status || (err.name === "TimeoutError" ? 504 : 500);
