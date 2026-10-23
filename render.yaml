@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: word-cloud-vocabulary
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
